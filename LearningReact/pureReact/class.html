@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Pure React Samples</title>
+  </head>
+  <body>
+
+    <!-- Target Container -->
+    <div id="react-container"></div>
+
+    <!-- React Library & ReactDOM -->
+    <script src="https://unpkg.com/react@15.4.2/dist/react.js"></script>
+    <script src="https://unpkg.com/react-dom@15.4.2/dist/react-dom.js"></script>
+
+    <script>
+      
+      const items = [
+        '1 lb Salmon',
+        '1 cup Pine Nuts', 
+        '2 cups Butter Lettuce',
+        '1 Yellow Squash',
+        '1/2 cup Olive Oil',
+        '3 cloves of Garlic',
+      ];
+
+
+      /* As a class */
+      const IngredientsListPure = React.createClass({
+        displayName: "IngredientsList",
+        renderListItem(ingredient, i) {
+          return React.createElement("li", { key: i }, ingredient)
+        },
+        render() {
+          return React.createElement("ul", {className: "ingredients"},
+            this.props.items.map(this.renderListItem)
+          )
+        }
+      })
+
+      /* Stateless functional component */
+      const IngredientsList = ({items}) =>
+        React.createElement("ul", {className: "ingredients"},
+          items.map((ingredient, i) => 
+            React.createElement("li", {key: i}, ingredient)
+          )
+        )
+
+      /* A factory
+      React.DOM.ul({"className": "ingredients"}, 
+        React.DOM.li(null, "ingredient")
+      );*/
+
+      /* To create a component as a function you need to explicitly create a function */
+      const { render } = ReactDOM;
+
+      const IngredientsList = ({ list }) =>
+        React.createElement('ul', null,
+          list.map((ingredient, i) => 
+            React.createElement('li', {key: i}, ingredient)
+          )
+        )
+
+      const Ingredients = React.createFactory(IngredientsList);
+
+      render(
+        Ingredients({list: items}),
+        document.getElementById('react-container')
+      );
+
+      /* 
+      ReactDOM.render(
+        React.createElement(IngredientsList, {items}, null),
+        document.getElementById('react-container')
+      );*/
+      
+    </script>
+  </body>
+</html>
