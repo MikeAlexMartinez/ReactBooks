@@ -1,3 +1,4 @@
+import React from 'react';
 import { Menu, NewColor, Colors } from './containers';
 import '../../stylesheets/APP.scss';
 
@@ -6,6 +7,6 @@ const App = () =>
     <Menu />
     <NewColor />
     <Colors />
-  </div>
+  </div>;
 
 export default App;

@@ -1,3 +1,4 @@
+import React from 'react';
 import PropTypes from 'prop-types';
 import Color from './Color';
 import '../../../stylesheets/ColorList.scss';
@@ -19,7 +20,7 @@ const ColorList = ({ colors=[], onRemove=f=>f, onRate=f=>f }) =>
         />
       )
     }
-  </div>
+  </div>;
 
 ColorList.propTypes = {
   colors: PropTypes.array,

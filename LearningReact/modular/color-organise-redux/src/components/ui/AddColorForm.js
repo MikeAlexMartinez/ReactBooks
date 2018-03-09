@@ -1,5 +1,6 @@
-import PropTypes from 'prop-types'
-import '../../../stylesheets/AddColorForm.scss'
+import React from 'react';
+import PropTypes from 'prop-types';
+import '../../../stylesheets/AddColorForm.scss';
 
 const AddColorForm = ({ onNewColor=f=>f }) => {
   // scope variables for component
@@ -30,7 +31,7 @@ const AddColorForm = ({ onNewColor=f=>f }) => {
       />
       <button>ADD</button>
     </form>
-  )
+  );
 };
 
 AddColorForm.propTypes = {

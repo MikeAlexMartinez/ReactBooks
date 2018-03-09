@@ -6,7 +6,7 @@ import stateData from '../../data/colors';
 
 const logger = store => next => action => {
   let result;
-  console.groupCollapsed("dispatching", action.type);
+  console.groupCollapsed('dispatching', action.type);
   console.log('prev state', store.getState());
   console.log('action', action);
   result = next(action);
@@ -26,7 +26,7 @@ const storeFactory = (initialState=stateData) =>
     combineReducers({ colors, sort}),
     (localStorage['redux-store'])
       ? JSON.parse(localStorage['redux-store'])
-      : stateData
+      : initialState
   );
 
 export default storeFactory;

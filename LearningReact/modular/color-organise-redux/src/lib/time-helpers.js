@@ -19,7 +19,7 @@ const isUnderTime = (diff, timeframe, time) => diff / timeframe < time;
 const diffOverTimeframe = (diff, timeframe) => Math.floor(diff/timeframe);
 
 const printResult = (result, timeframeName) =>
-  `${result} ${timeframeName + ((result > 1) ? "s": "")}`;
+  `${result} ${timeframeName + ((result > 1) ? 's': '')}`;
 
 const checkDate = (diff, timeframeName, underTime, timeframe) =>
   (isUnderTime(diff, timeframe[timeframeName], underTime))
@@ -31,7 +31,7 @@ const printFullDate = dateTime =>
 
 const lessThanAMinute = timestring =>
   (timestring.match(/seconds/))
-    ? "less than a minute"
+    ? 'less than a minute'
     : timestring + ' ago';
 
 const _checkNext = (result, callback) =>

@@ -1,4 +1,3 @@
-import PropTypes from 'react';
 import { connect } from 'react-redux';
 import AddColorForm from './ui/AddColorForm';
 import SortMenu from './ui/SortMenu';
@@ -28,7 +27,7 @@ export const Menu = connect(
   dispatch =>
     ({
       onSelect(sortBy) {
-        dispatch(sortColors(sortBy))
+        dispatch(sortColors(sortBy));
       }
     })
 )(SortMenu);
