@@ -3,13 +3,14 @@ import { v4 } from 'uuid';
 import AddColorForm from './AddColorForm';
 import ColorList from './ColorList';
 import '../../stylesheets/APP.scss';
+import {colors} from '../../data/colors.json';
 
 class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      colors: [],
+      colors: colors,
     };
     this.addColor = this.addColor.bind(this);
     this.rateColor = this.rateColor.bind(this);
