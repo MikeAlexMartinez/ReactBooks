@@ -48,5 +48,6 @@ module.exports = {
         __dirname: true,
         "process": true,
         "Enzyme": true,
+        "_testColors": true,
     }
 };
