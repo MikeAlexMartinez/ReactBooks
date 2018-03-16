@@ -1,12 +1,12 @@
 const axios = require('axios');
 
 const id = "MikeAlexMartinez";
-const acc = "804c5e59c7385fb000e32a3ef8a1a09be230da6b";
+const acc = "da1e382372bf96804f1cbd13c212f8fb1ab104a1";
 const params = "?access_token=" + acc;
 
 
 function getProfile (username) {
-  return axios.get('https://api.github.com/users/' + username + params)
+  return axios.get('https://api.github.com/users/' + username)
     .then(function (user) {
       return user.data;
     });
