@@ -62,7 +62,7 @@ function Repo(props) {
         </li>
         <a href={repo.html_url}>{repo.name}</a>
         <li>@{repo.owner.login}</li>
-        <li>{repo.startgazers_count} stars</li>
+        <li>{repo.stargazers_count} stars</li>
       </ul>
     </li>
   );
@@ -128,8 +128,8 @@ class Popular extends React.Component {
           selectedLanguage={this.state.selectedLanguage}
           onSelect={this.updateLanguage}
         />
-        {!this.state.repos
-          ? <Loading />
+        {this.state.repos.length === 0
+          ? <Loading text='Downloading' />
           : <RepoGrid
               repos={this.state.repos}
             />

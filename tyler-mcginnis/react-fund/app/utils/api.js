@@ -1,7 +1,8 @@
 const axios = require('axios');
+const configuration = require('../config.js');
 
-const id = "MikeAlexMartinez";
-const acc = "da1e382372bf96804f1cbd13c212f8fb1ab104a1";
+const id = configuration.ID;
+const acc = configuration.ACCESS_TOKEN;
 const params = "?access_token=" + acc;
 
 
