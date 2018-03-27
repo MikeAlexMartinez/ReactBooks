@@ -1,0 +1,127 @@
+- Implicit Binding
+- Explicit Binding
+- new Binding
+- window Binding
+
+// Where is this function invoked?
+
+// Implicit - (The most common)
+// Left of the Dot at Call Time (the call site)
+
+const me = {
+  name: 'Tyler',
+  age: 25,
+  sayName: function() {
+    console.log(this.name);
+  }
+};
+
+me.sayName()
+// => Tyler
+
+// with a mixin
+cosnt sayNameMixin = function(obj) {
+  obj.sayName = function(){
+    console.log(this.name);
+  };
+};
+
+const you = {
+  name: 'Michael',
+  age: 25
+};
+const youer = {
+  name: 'Tim',
+  age: 25
+};
+
+sayNameMixin(you);
+sayNameMixin(youer);
+
+you.sayName()
+// => 'Michael'
+youer.sayName()
+// => 'Tim'
+
+const Person = function(name, age) {
+  return {
+    name: name,
+    age: age,
+    sayName: function() {
+      console.log(this.name);
+    },
+    mother: {
+      name: 'Stacey',
+      sayName: function(){
+        console.log(this.name);
+      }
+    }
+  };
+};
+
+const jim = Person('Jim', 42);
+jim.sayName();
+//=> Jim
+jim.mother.sayName();
+//=> 'Stacey'
+
+
+// Explicit Binding
+// call, apply, bind
+
+const sayName = function(lang1, lang2, lang3){
+  console.log('My name is ' + this.name + ' and I know ' + lang1 + ', ' + lang2 + ', and ' + lang3);
+};
+
+const Stacey = {
+  name: 'Stacey',
+  age: 34,
+};
+
+const languages = ['Javascript', 'Ruby', 'Python'];
+
+// Explicitly calls sayName passing in the context and arguments.
+sayName.call(stacey, languages[0], languages[1], languages[2]);
+// => My Name is Stacey and I know Javascript, Ruby and Python
+
+// same as call but pass arguments as an array.
+sayName.apply(stacey, languages);
+// => My Name is Stacey and I know Javascript, Ruby and Python
+
+// bind works like .call except it returns a new function that you can use later
+// with the chosen object binded to the function call.
+const someFn = sayName.bind(stacey, languages[0], languages[1], languages[2]);
+
+someFn();
+// => My Name is Stacey and I know Javascript, Ruby and Python
+
+
+// new Binding
+// when invoked with new JS creates new object and this is bound
+// to new object being constructed
+const Animal = function(color, name, type) {
+  //this = {}
+  this.color = color;
+  this.name = name;
+  this.type = type;
+}
+
+const zebra = new Animal('black and white', 'Zorro', 'Zebra');
+// => creates new object with properties as defined in constructor
+
+// window Binding
+const sayAge = function(){
+  console.log(this.age);
+};
+
+const me = {
+  age: 25
+};
+
+sayAge();
+// => undefined
+window.age = 35;
+// => 35
+
+// In strict mode you can't bind to the window object.
+

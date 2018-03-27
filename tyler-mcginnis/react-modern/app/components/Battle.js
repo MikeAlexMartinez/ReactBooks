@@ -1,0 +1,168 @@
+const React = require('react');
+const PropTypes = require('prop-types');
+const Link = require('react-router-dom').Link;
+
+const PlayerPreview = require('./PlayerPreview');
+const Reset = require('./Reset');
+
+class PlayerInput extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      username: ''
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  
+  handleChange(event) {
+    const val = event.target.value;
+    this.setState(function() {
+      return {
+        username: val,
+      };
+    });
+  }
+
+  handleSubmit(event) {
+    event.preventDefault();
+    this.props.onSubmit(
+      this.props.id,
+      this.state.username
+    );
+  }
+
+  render() {
+    return (
+      <form className='column' onSubmit={this.handleSubmit}>
+        <label className='header' htmlFor='username'>
+          {this.props.label}
+        </label>
+        <input
+          id='username'
+          placeholder='github username'
+          type='text'
+          autoComplete='off'
+          value={this.state.username}
+          onChange={this.handleChange}
+        />
+        <button 
+          className='button'
+          type='submit'
+          disabled={!this.state.username}
+        >
+          Submit
+        </button>
+      </form>
+    );
+  }
+}
+
+PlayerInput.propTypes = {
+  id: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+}
+
+class Battle extends React.Component {
+  constructor (props) {
+    super(props);
+
+    this.state = {
+      playerOneName: '',
+      playerOneImage: null,
+      playerTwoName: '',
+      playerTwoImage: null,
+    }
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleReset = this.handleReset.bind(this);
+  }
+
+  handleReset(id) {
+    this.setState(function() {
+      const newState = {};
+      newState[id+'Name'] = '';
+      newState[id+'Image'] = null;
+      return newState;
+    })
+  }
+
+  handleSubmit(id, username) {
+    this.setState(function() {
+      const newState = {};
+      newState[id+'Name'] = username;
+      newState[id+'Image'] = 'https://github.com/' + username + '.png?size=200'; 
+      return newState;
+    })
+  }
+
+  render() {
+    const match = this.props.match;
+    const playerOneName = this.state.playerOneName;
+    const playerOneImage = this.state.playerOneImage;
+    const playerTwoName = this.state.playerTwoName;
+    const playerTwoImage = this.state.playerTwoImage;
+    return (
+      <div>
+        <div className='row'>
+          {!playerOneName && 
+            <PlayerInput 
+              id='playerOne'
+              label='Player One'
+              onSubmit={this.handleSubmit}
+            />
+          }
+          {playerOneImage !== null &&
+            <div>
+              <PlayerPreview
+                avatar={playerOneImage}
+                username={playerOneName}
+              />
+              <Reset 
+                id='playerOne'
+                onReset={this.handleReset}
+              />
+            </div>
+          }
+          {!playerTwoName &&
+            <PlayerInput 
+              id='playerTwo'
+              label='Player Two'
+              onSubmit={this.handleSubmit}
+            />
+          }
+          {playerTwoImage !== null &&
+            <div>
+              <PlayerPreview
+                avatar={playerTwoImage}
+                username={playerTwoName}
+              >
+                <Reset
+                  id='playerTwo'
+                  onReset={this.handleReset}
+                />
+              </PlayerPreview>
+            </div>
+          }
+        </div>
+        {playerTwoImage &&
+         playerOneImage &&
+          <Link
+            className='button'
+            to={{
+              pathname: match.url + '/results',
+              search: '?playerOneName=' + playerOneName + '&playerTwoName=' + playerTwoName
+            }}
+          >
+            Battle!
+          </Link>
+        }
+      </div>
+    );
+  }
+}
+
+module.exports = Battle;
