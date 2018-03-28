@@ -1,26 +1,26 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const Link = require('react-router-dom').Link;
-const queryString = require('query-string');
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+import queryString from 'query-string';
 
-const PlayerPreview = require('./PlayerPreview');
-const Reset = require('./Reset');
-const Loading = require('./Loading');
+import PlayerPreview from './PlayerPreview';
+import Reset from './Reset';
+import Loading from './Loading';
 
-const api = require('../utils/api');
+import { battle } from '../utils/api';
 
-function Profile (props) {
-  const info = props.info;
+function Profile ({ info }) {
+  const {avatar_url, login, name, location, company, followers, following, blog, public_repos } = info;
   return (
-    <PlayerPreview avatar={info.avatar_url} username={info.login}>
+    <PlayerPreview avatar={avatar_url} username={login}>
       <ul className='space-list-items'>
-        {info.name && <li>{info.name}</li>}
-        {info.location && <li>{info.location}</li>}
-        {info.company && <li>{info.company}</li>}
-        <li>Followers: {info.followers}</li>
-        <li>Following: {info.following}</li>
-        <li>Public Repos: {info.public_repos}</li>
-        {info.blog && <li><a href={info.blog}>{info.blog}</a></li>}
+        {name && <li>{name}</li>}
+        {location && <li>{location}</li>}
+        {company && <li>{company}</li>}
+        <li>Followers: {followers}</li>
+        <li>Following: {following}</li>
+        <li>Public Repos: {public_repos}</li>
+        {blog && <li><a href={blog}>{blog}</a></li>}
       </ul>
     </PlayerPreview>
   )
@@ -30,13 +30,13 @@ Profile.propTypes = {
   info: PropTypes.object.isRequired,
 };
 
-function Player (props) {
+function Player ({ label, score, profile }) {
   return (
     <div>
-      <h1 className='header'>{props.label}</h1>
-      <h3 style={{textAlign: 'center'}}>Score: {props.score}</h3>
+      <h1 className='header'>{label}</h1>
+      <h3 style={{textAlign: 'center'}}>Score: {score}</h3>
       <Profile 
-        info={props.profile}
+        info={profile}
       />
     </div>
   );
@@ -48,51 +48,35 @@ Player.propTypes = {
   profile: PropTypes.object.isRequired,
 }
 
-class Results extends React.Component {
-  constructor (props) {
-    super(props);
-
-    this.state = {
-      winner: null,
-      loser: null,
-      error: null,
-      loading: true,
-    }
+export default class Results extends React.Component {
+  state = {
+    winner: null,
+    loser: null,
+    error: null,
+    loading: true,
   }
   
-  componentDidMount() {
-    const players = queryString.parse(this.props.location.search);
-    api.battle([
-      players.playerOneName,
-      players.playerTwoName,
-    ]).then(function (results) {
-      if (results === null) {
-        return this.setState(function () {
-          return {
-            error: 'Looks like there was an error.' + 
-              ' Check that both users exist on github',
-            loading: false,
-          };
-        });
-      }
+  async componentDidMount() {
+    const { location } = this.props;
+    const { playerOneName, playerTwoName } = queryString.parse(location.search);
 
-      this.setState(function () {
-        return {
-          error: null,
-          winner: results[0],
-          loser: results[1],
+    
+    const [winner, loser] = await battle([playerOneName, playerTwoName]);
+    winner === null || loser === null
+      ? this.setState(() => ({
+          error: `Looks like there was an error. Check that both users exist on github`,
           loading: false,
-        };
-      })
-    }.bind(this));
+        }))
+      : this.setState(() => ({
+          error: null,
+          winner,
+          loser,
+          loading: false,
+        }));
   }
   
   render() {
-    const winner = this.state.winner;
-    const loser = this.state.loser;
-    const error = this.state.error;
-    const loading = this.state.loading;
-
+    const { winner, loser, error, loading } = this.state;
     if (loading) {
       return <Loading text='Battling' speed={200} />;
     }
@@ -126,5 +110,3 @@ class Results extends React.Component {
     )
   }
 }
-
-module.exports = Results;

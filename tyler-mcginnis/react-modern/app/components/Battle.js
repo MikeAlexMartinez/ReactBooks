@@ -1,32 +1,31 @@
-const React = require('react');
-const PropTypes = require('prop-types');
-const Link = require('react-router-dom').Link;
+import React from 'react';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
-const PlayerPreview = require('./PlayerPreview');
-const Reset = require('./Reset');
+import PlayerPreview from './PlayerPreview';
+import Reset from './Reset';
 
 class PlayerInput extends React.Component {
-  constructor(props) {
-    super(props);
+  static propTypes = {
+    id: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+    onSubmit: PropTypes.func.isRequired,
+  }
 
-    this.state = {
-      username: ''
-    };
-
-    this.handleChange = this.handleChange.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
+  static defaultProps = {
+    label: 'Username',
   }
   
-  handleChange(event) {
+  state = {
+    username: ''
+  }
+  
+  handleChange = (event) => {
     const val = event.target.value;
-    this.setState(function() {
-      return {
-        username: val,
-      };
-    });
+    this.setState(() => ({ username: val}));
   }
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     event.preventDefault();
     this.props.onSubmit(
       this.props.id,
@@ -35,23 +34,25 @@ class PlayerInput extends React.Component {
   }
 
   render() {
+    const { username } = this.state;
+    const { label } = this.props; 
     return (
       <form className='column' onSubmit={this.handleSubmit}>
         <label className='header' htmlFor='username'>
-          {this.props.label}
+          {label}
         </label>
         <input
           id='username'
           placeholder='github username'
           type='text'
           autoComplete='off'
-          value={this.state.username}
+          value={username}
           onChange={this.handleChange}
         />
         <button 
           className='button'
           type='submit'
-          disabled={!this.state.username}
+          disabled={!username}
         >
           Submit
         </button>
@@ -60,51 +61,31 @@ class PlayerInput extends React.Component {
   }
 }
 
-PlayerInput.propTypes = {
-  id: PropTypes.string.isRequired,
-  label: PropTypes.string.isRequired,
-  onSubmit: PropTypes.func.isRequired,
-}
-
 class Battle extends React.Component {
-  constructor (props) {
-    super(props);
-
-    this.state = {
-      playerOneName: '',
-      playerOneImage: null,
-      playerTwoName: '',
-      playerTwoImage: null,
-    }
-
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleReset = this.handleReset.bind(this);
+  state = {
+    playerOneName: '',
+    playerOneImage: null,
+    playerTwoName: '',
+    playerTwoImage: null,
+  }
+  
+  handleSubmit = (id, username) => {
+    this.setState(() => ({
+      [id+'Name']: username,
+      [id+'Image']: `https://github.com/${username}.png?size=200`,
+    }));
   }
 
-  handleReset(id) {
-    this.setState(function() {
-      const newState = {};
-      newState[id+'Name'] = '';
-      newState[id+'Image'] = null;
-      return newState;
-    })
-  }
-
-  handleSubmit(id, username) {
-    this.setState(function() {
-      const newState = {};
-      newState[id+'Name'] = username;
-      newState[id+'Image'] = 'https://github.com/' + username + '.png?size=200'; 
-      return newState;
-    })
+  handleReset = (id) => {
+    this.setState(() => ({
+      [id+'Name']: '',
+      [id+'Image']: null,
+    }));
   }
 
   render() {
-    const match = this.props.match;
-    const playerOneName = this.state.playerOneName;
-    const playerOneImage = this.state.playerOneImage;
-    const playerTwoName = this.state.playerTwoName;
-    const playerTwoImage = this.state.playerTwoImage;
+    const { match } = this.props;
+    const { playerOneName, playerOneImage, playerTwoName, playerTwoImage } = this.state;
     return (
       <div>
         <div className='row'>
@@ -153,8 +134,8 @@ class Battle extends React.Component {
           <Link
             className='button'
             to={{
-              pathname: match.url + '/results',
-              search: '?playerOneName=' + playerOneName + '&playerTwoName=' + playerTwoName
+              pathname: `${match.url}/results`,
+              search: `?playerOneName=${playerOneName}&playerTwoName=${playerTwoName}`
             }}
           >
             Battle!
@@ -165,4 +146,4 @@ class Battle extends React.Component {
   }
 }
 
-module.exports = Battle;
+export default Battle;

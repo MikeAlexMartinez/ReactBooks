@@ -1,10 +1,9 @@
-const React = require('react');
-const ReactDOM = require('react-dom');
-const PropTypes = require('prop-types');
-const axios = require('axios');
+import React from 'react';
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
+import axios from 'axios';
 
 class FriendsList extends React.Component {
-
   componentDidMount () {
     return axios.get(this.props.url).then(this.props.callback)
   }
@@ -38,4 +37,4 @@ Users.PropTypes = {
     ).isRequired,
 };
 
-module.exports = FriendsList;
+export default FriendsList;

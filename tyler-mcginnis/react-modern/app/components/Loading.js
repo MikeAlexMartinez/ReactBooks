@@ -1,5 +1,5 @@
-const React = require('react');
-const PropTypes = require('prop-types');
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 const styles = {
   content: {
@@ -8,34 +8,29 @@ const styles = {
   }
 };
 
-class Loading extends React.Component {
-  constructor (props) {
-    super(props);
+export default class Loading extends Component {
+  static propTypes = {
+    text: PropTypes.string.isRequired,
+    speed: PropTypes.number.isRequired,
+  }
 
-    this.state = {
-      text: props.text,
-    };
+  static defaultProps = {
+    text: 'Loading',
+    speed: 300,
   }
   
+  state = {
+    text: this.props.text,
+  };
+
   componentDidMount() {
-    var stopper = this.props.text + '...';
-    
-    this.interval = window.setInterval(function() {
-      if (this.state.text === stopper) {
-        this.setState(function () {
-          return {
-            text: this.props.text
-          };
-        })
-      } else {
-         this.setState(function (prevState) {
-          return {
-            text: prevState.text + '.'
-          };
-        })
-      }
-    }.bind(this), this.props.speed);
-    
+    const { text, speed } = this.props;
+    var stopper = `${text}...`;
+    this.interval = window.setInterval(() =>
+      this.state.text === stopper
+        ? this.setState(() => ({ text }))
+        : this.setState((prevState) => ({text: `${prevState.text}.`}))
+    , speed);
   }
 
   componentWillUnmount() {
@@ -50,15 +45,3 @@ class Loading extends React.Component {
     );
   }
 }
-
-Loading.propTypes = {
-  text: PropTypes.string.isRequired,
-  speed: PropTypes.number.isRequired,
-};
-
-Loading.defaultProps = {
-  text: 'Loading',
-  speed: 300
-};
-
-module.exports = Loading;

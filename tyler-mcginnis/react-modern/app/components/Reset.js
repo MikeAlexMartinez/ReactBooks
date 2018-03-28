@@ -1,5 +1,5 @@
-const React = require('react');
-const PropTypes = require('prop-types');
+import React from 'react';
+import PropTypes from 'prop-types';
 
 function Reset (props) {
   return (
@@ -15,4 +15,4 @@ Reset.propTypes = {
   onReset: PropTypes.func.isRequired
 };
 
-module.exports = Reset;
+export default Reset;
