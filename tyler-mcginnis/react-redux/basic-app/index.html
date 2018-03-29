@@ -2,6 +2,7 @@
 <html>
   <head>
     <title>Todos/Goals</title>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.min.js'></script>
   </head>
   <body>
 
@@ -23,7 +24,6 @@
       </ul>
     </div>
 
-
     <script type='text/javascript'>
 
       function generateId () {
@@ -31,6 +31,7 @@
       }
 
       // Library Code
+      /* equivalent to Redux createStore */
       function createStore (reducer) {
         // The store sjhould have four parts
         // 1. The State
@@ -69,43 +70,6 @@
         }
       }
 
-      // An action is an event or action that represents
-      // in an event in the app that changes the state
-      // of the application 
-      /*
-      {
-        type: 'ADD_TODO',
-        todo: {
-          id: 0,
-          name: 'Learn Redux',
-          complete: false,
-        }
-      }
-
-      {
-        type: 'REMOVE_TODO',
-        id: 0,
-      }
-
-      {
-        type: 'TOGGLE_TODO',
-        id: 0,
-      }
-
-      {
-        type: 'ADD_GOAL',
-        goal: {
-          id: 0,
-          name: 'Run a Marathon',
-        }
-      }
-
-      {
-        type: 'REMOVE_GOAL',
-        id: 0,
-      }
-      */
-
       /*
         Characteristics of a pure function
         1. Always return same value given the same arguments.
@@ -128,17 +92,17 @@
         }
       }
 
-      function removeTodoAction (todo) {
+      function removeTodoAction (id) {
         return {
           type: REMOVE_TODO,
-          todo
+          id
         }
       }
 
-      function toggleTodoAction (todo) {
+      function toggleTodoAction (id) {
         return {
           type: TOGGLE_TODO,
-          todo
+          id
         }
       }
 
@@ -149,11 +113,37 @@
         }
       }
 
-      function removeGoalAction (goal) {
+      function removeGoalAction (id) {
         return {
           type: REMOVE_GOAL,
-          goal
+          id
         }
+      }
+
+      const logger = (store) => (next) => (action) => {
+        console.group(action.type);
+        console.log('The action: ', action);
+        const result = next(action);
+        console.log('The new state: ', store.getState());
+        console.groupEnd();
+      }
+
+      const checker = (store) => (next) => (action) => {
+        if (
+          action.type === ADD_TODO &&
+          action.todo.name.toLowerCase().indexOf('bitcoin') !== -1
+        ) {
+          return alert("Nope. That's a bad idea.")
+        }
+
+        if (
+          action.type === ADD_GOAL &&
+          action.goal.name.toLowerCase().indexOf('bitcoin') !== -1
+        ) {
+          return alert("Nope. That's a bad idea.")
+        }
+
+        return next(action);
       }
 
       // Reducer
@@ -183,7 +173,8 @@
             return state;
         }
       }
-
+      
+      /* equivalent to combineReducers */ 
       function app (state = {}, action) {
         return {
           goals: goals(state.goals, action),
@@ -191,48 +182,65 @@
         }
       }
 
-      const store = createStore(app);
+      const store = Redux.createStore(Redux.combineReducers({
+        todos,
+        goals,
+      }), Redux.applyMiddleware(checker, logger));
 
       const unsubscribe = store.subscribe(() => {
-        console.log('the state of the store: ', store.getState());
+        const { todos, goals } = store.getState();
+        
+        document.getElementById('goals').innerHTML = '';
+        document.getElementById('todos').innerHTML = '';
+
+        goals.forEach(addGoalToDOM);
+        todos.forEach(addTodoToDOM);
       });
 
-      store.dispatch(addTodoAction({
-        id: 0,
-        name: 'Learn Redux',
-        complete: false 
-      }));
-
-      store.dispatch(addTodoAction({
-        id: 1,
-        name: 'Learn Immutable',
-        complete: false 
-      }));
-
-      store.dispatch(addTodoAction({
-        id: 2,
-        name: 'Learn Angular',
-        complete: false 
-      }));
-
-      store.dispatch(addGoalAction({
-        id: 0,
-        name: 'Get a job',
-        complete: false
-      }));
-
-      store.dispatch(addGoalAction({
-        id: 1,
-        name: 'Run half marathon',
-        complete: false
-      }));
-
-      store.dispatch(removeGoalAction({id: 1}))
-      store.dispatch(removeTodoAction({id: 2}))
-      store.dispatch(toggleTodoAction({id: 0}))
-
-
       // DOM Code
+      function addTodoToDOM (todo) {
+        const node = document.createElement('li');
+        const text = document.createTextNode(todo.name);
+
+        const removeBtn = createRemoveButton(() => {
+          store.dispatch(removeTodoAction(todo.id));
+        });
+
+        node.appendChild(text);
+        node.appendChild(removeBtn);
+
+        node.style.textDecoration = todo.complete ? 'line-through' : 'none';
+        node.addEventListener('click', () => {
+          store.dispatch(toggleTodoAction(todo.id))
+        });
+
+        document.getElementById('todos')
+          .appendChild(node);
+      }
+
+      function addGoalToDOM (goal) {
+        const node = document.createElement('li');
+        const text = document.createTextNode(goal.name);
+        
+        const removeBtn = createRemoveButton(() => {
+          store.dispatch(removeGoalAction(goal.id));
+        });
+
+        node.appendChild(text);
+        node.appendChild(removeBtn);
+
+        document.getElementById('goals')
+          .appendChild(node);
+      }
+
+      function createRemoveButton (onClick) {
+        const removeBtn = document.createElement('button');
+        removeBtn.innerHTML = 'X';
+        removeBtn.addEventListener('click', onClick);
+
+        return removeBtn;
+      }
+
       function addTodo () {
         const input = document.getElementById('todo');
         const name = input.value;
@@ -262,6 +270,7 @@
 
       document.getElementById('goalBtn')
         .addEventListener('click', addGoal);
+
     </script>
   </body>
 </html>
