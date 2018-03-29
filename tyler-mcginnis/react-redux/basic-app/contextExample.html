@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Todos/Goals</title>
+    <script src='https://unpkg.com/react@16.3.0-alpha.1/umd/react.development.js'></script>
+    <script src='https://unpkg.com/react-dom@16.3.0-alpha.1/umd/react-dom.development.js'></script>
+    <script src='https://unpkg.com/babel-standalone@6.15.0/babel.min.js'></script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type='text/babel'>
+
+      const Context = React.createContext();
+
+      function Parent () {
+        return (
+          <div>
+            <h3>Parent</h3>
+            <Child />
+          </div>
+        );
+      }
+
+      function Child () {
+        return (
+          <div>
+            <h3>Child</h3>
+            <Grandchild />
+          </div>
+        );
+      }
+
+      function Grandchild () {
+        return (
+          <Context.Consumer>
+            {(name) => (
+              <div>
+                <h3>Grandchild</h3>
+                <h3>Name: {name}</h3>
+              </div>
+            )}
+          </Context.Consumer>
+        );
+      }
+
+      class App extends React.Component {
+        render() {
+          const name = 'Tyler'; 
+          
+          return (
+            <Context.Provider value={name}>
+              <Parent />
+            </Context.Provider>
+          )
+        }
+      }
+
+      ReactDOM.render(
+        <App />,
+        document.getElementById('app')
+      );
+    </script>
+  </body>
+</html>
