@@ -1,0 +1,11 @@
+{
+  "name": "react-redux",
+  "version": "0.0.1",
+  "description": "working throuh tyler mcginnis redux course",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Michael Martinez",
+  "license": "MIT"
+}
