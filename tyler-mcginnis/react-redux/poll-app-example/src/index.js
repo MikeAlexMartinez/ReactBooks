@@ -9,9 +9,10 @@ import middleware from './middleware';
 import App from './components/App'
 import './index.css'
 
-const store = createStore(reducer, middleware);
-
-console.log(store.getState());
+const store = createStore(
+  reducer,
+  middleware
+);
 
 ReactDOM.render(
   <Provider store={store}>
